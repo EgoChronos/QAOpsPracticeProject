@@ -1,0 +1,279 @@
+name: Playwright Tests
+
+on:
+  # Run on every push to main or develop branches
+  push:
+    branches: [main, develop]
+
+  # Run on every pull request
+  pull_request:
+    branches: [main, develop]
+
+  # Allow manual trigger with environment selection
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - local
+          - dev
+          - staging
+          - production
+
+      test_suite:
+        description: 'Test suite to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - smoke
+          - regression
+          - api
+          - ui
+
+  # Scheduled regression run — every day at 6 AM UTC
+  schedule:
+    - cron: '0 6 * * *'
+
+# ---------------------------------------------------------------------------
+# Jobs
+# ---------------------------------------------------------------------------
+jobs:
+  # -------------------------------------------------------------------------
+  # Smoke Tests — Fast, runs on every PR
+  # -------------------------------------------------------------------------
+  smoke:
+    name: Smoke Tests (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run smoke tests
+        run: npx playwright test --grep @smoke --project=${{ matrix.browser }}
+        env:
+          CI: true
+          TEST_ENV: staging
+          BASE_URL: ${{ secrets.STAGING_BASE_URL || 'https://automationintesting.online' }}
+          API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'password' }}
+          ALLURE_RESULTS_DIR: reporting/allure-results
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-smoke-${{ matrix.browser }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload Allure Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-results-smoke-${{ matrix.browser }}
+          path: reporting/allure-results/
+          retention-days: 30
+
+      - name: Upload Test Artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-artifacts-smoke-${{ matrix.browser }}
+          path: |
+            test-results/
+            reporting/allure-results/
+          retention-days: 7
+
+  # -------------------------------------------------------------------------
+  # Full Regression — Runs on push to main and scheduled
+  # -------------------------------------------------------------------------
+  regression:
+    name: Regression Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    if: github.ref == 'refs/heads/main' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run regression tests (shard ${{ matrix.shard }}/4)
+        run: npx playwright test --shard=${{ matrix.shard }}/4 --project=chromium
+        env:
+          CI: true
+          TEST_ENV: ${{ github.event.inputs.environment || 'staging' }}
+          BASE_URL: ${{ secrets.STAGING_BASE_URL || 'https://automationintesting.online' }}
+          API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'password' }}
+          ALLURE_RESULTS_DIR: reporting/allure-results
+
+      - name: Upload blob report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: blob-report/
+          retention-days: 1
+
+      - name: Upload Allure Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-results-${{ matrix.shard }}
+          path: reporting/allure-results/
+          retention-days: 30
+
+  # -------------------------------------------------------------------------
+  # Merge Reports — Combines sharded reports into one
+  # -------------------------------------------------------------------------
+  merge-reports:
+    name: Merge & Publish Reports
+    runs-on: ubuntu-latest
+    needs: regression
+    if: always()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download blob reports
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge Playwright reports
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Download Allure results
+        uses: actions/download-artifact@v4
+        with:
+          path: reporting/allure-results
+          pattern: allure-results-*
+          merge-multiple: true
+
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
+
+      - name: Generate Allure report
+        run: allure generate reporting/allure-results --clean -o reporting/allure-report
+
+      - name: Upload merged HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-full
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload Allure HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-full
+          path: reporting/allure-report/
+          retention-days: 30
+
+      - name: Upload JUnit XML
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-results
+          path: test-results/results.xml
+          retention-days: 30
+
+  # -------------------------------------------------------------------------
+  # API Tests — Separate job, no browser needed
+  # -------------------------------------------------------------------------
+  api-tests:
+    name: API Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright (no browsers needed for API tests)
+        run: npx playwright install
+
+      - name: Run API tests
+        run: npx playwright test tests/api --project=api
+        env:
+          CI: true
+          TEST_ENV: staging
+          BASE_URL: ${{ secrets.STAGING_BASE_URL || 'https://automationintesting.online' }}
+          API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'password' }}
+          ALLURE_RESULTS_DIR: reporting/allure-results
+
+      - name: Upload API Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-results
+          path: |
+            playwright-report/
+            reporting/allure-results/
+            test-results/results.xml
+          retention-days: 30

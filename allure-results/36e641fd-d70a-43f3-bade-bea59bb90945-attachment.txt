@@ -1,0 +1,2 @@
+[2026-07-29T22:23:26.193Z] [DEBUG] → GET https://restful-booker.herokuapp.com/booking { params: undefined, data: undefined }
+[2026-07-29T22:23:26.464Z] [DEBUG] ← 200 GET /booking 

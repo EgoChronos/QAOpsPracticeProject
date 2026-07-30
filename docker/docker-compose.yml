@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # Base service with common configuration
+  tests-base:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    # Mount the reporting and results directories so they are preserved on the host
+    volumes:
+      - ../reporting/allure-results:/app/reporting/allure-results
+      - ../playwright-report:/app/playwright-report
+      - ../test-results:/app/test-results
+    # Pass through environment variables from the host's .env file
+    env_file:
+      - ../.env
+    profiles: ["base"] # Prevents this from running directly with `docker-compose up`
+
+  # Run all tests
+  tests-all:
+    extends: tests-base
+    container_name: qaops-tests-all
+    command: npm run ci
+    profiles: ["all"]
+
+  # Run only UI tests
+  tests-ui:
+    extends: tests-base
+    container_name: qaops-tests-ui
+    command: npm run ui
+    profiles: ["ui"]
+
+  # Run only API tests
+  tests-api:
+    extends: tests-base
+    container_name: qaops-tests-api
+    command: npm run api
+    profiles: ["api"]
+
+  # Run smoke tests
+  tests-smoke:
+    extends: tests-base
+    container_name: qaops-tests-smoke
+    command: npm run smoke
+    profiles: ["smoke"]
+
+# Usage Examples:
+# docker-compose -f docker/docker-compose.yml --profile all up
+# docker-compose -f docker/docker-compose.yml --profile api up

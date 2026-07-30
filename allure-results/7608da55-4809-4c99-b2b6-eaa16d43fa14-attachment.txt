@@ -1,0 +1,23 @@
+[2026-07-29T22:14:31.138Z] [WARN ] Failed to delete booking 1968 during cleanup Error: Authentication failed for user "admin". Response: {"reason":"Bad credentials"}
+    at AuthClient.getToken (/home/chronos/Downloads/QAOpsPracticeProject/src/api/clients/auth.client.ts:38:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at AuthService.getToken (/home/chronos/Downloads/QAOpsPracticeProject/src/api/services/auth.service.ts:43:19)
+    at BookingService.getAuthenticatedClient (/home/chronos/Downloads/QAOpsPracticeProject/src/api/services/booking.service.ts:50:21)
+    at BookingService.deleteBooking (/home/chronos/Downloads/QAOpsPracticeProject/src/api/services/booking.service.ts:119:20)
+    at /home/chronos/Downloads/QAOpsPracticeProject/src/api/services/booking.service.ts:144:9
+    at async Promise.allSettled (index 0)
+    at BookingService.cleanup (/home/chronos/Downloads/QAOpsPracticeProject/src/api/services/booking.service.ts:151:5)
+    at Object.bookingService [as fn] (/home/chronos/Downloads/QAOpsPracticeProject/src/fixtures/base.fixture.ts:114:5)
+    at /home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:190:9
+    at Fixture._teardownInternal (/home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:229:7)
+    at /home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11
+    at TimeoutManager.withRunnable (/home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:403:14)
+    at TestInfoImpl._runWithTimeout (/home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:1131:7)
+    at TestInfoImpl._runAsStep (/home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:1122:7)
+    at Fixture.teardown (/home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:209:11)
+    at FixtureRunner.teardownScope (/home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:276:9)
+    at /home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:1667:9
+    at TestInfoImpl._runAsStep (/home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:1122:7)
+    at WorkerMain._runTest (/home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:1652:5)
+    at WorkerMain.runTestGroup (/home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/worker/workerProcessEntry.js:1510:9)
+    at process.<anonymous> (/home/chronos/Downloads/QAOpsPracticeProject/node_modules/playwright/lib/common/index.js:2000:25)

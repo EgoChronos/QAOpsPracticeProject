@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Product Defects",
+    "description": "Tests that failed due to application bugs or regressions",
+    "messageRegex": ".*AssertionError.*|.*expect\\(.*\\).*",
+    "matchedStatuses": ["failed"]
+  },
+  {
+    "name": "Test Infrastructure Issues",
+    "description": "Tests that failed due to timeouts or network issues",
+    "messageRegex": ".*TimeoutError.*|.*ETIMEDOUT.*|.*ECONNREFUSED.*",
+    "matchedStatuses": ["failed", "broken"]
+  },
+  {
+    "name": "Element Not Found",
+    "description": "Tests that failed because an expected element was not visible",
+    "messageRegex": ".*locator.*not visible.*|.*waiting for.*",
+    "matchedStatuses": ["failed", "broken"]
+  },
+  {
+    "name": "Authentication Failures",
+    "description": "Tests that failed due to authentication/session issues",
+    "messageRegex": ".*auth.*|.*token.*|.*401.*|.*403.*",
+    "matchedStatuses": ["failed", "broken"]
+  },
+  {
+    "name": "API Errors",
+    "description": "Tests that failed due to unexpected API responses",
+    "messageRegex": ".*status.*|.*response.*|.*404.*|.*500.*",
+    "matchedStatuses": ["failed", "broken"]
+  }
+]

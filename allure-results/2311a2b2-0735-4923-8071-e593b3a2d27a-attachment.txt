@@ -1,0 +1,12 @@
+[2026-07-29T22:15:24.281Z] [DEBUG] → POST https://restful-booker.herokuapp.com/booking {
+  params: undefined,
+  data: {
+    firstname: 'Edwina',
+    lastname: 'Nader',
+    totalprice: 4696,
+    depositpaid: true,
+    bookingdates: { checkin: '2026-08-01', checkout: '2026-08-09' },
+    additionalneeds: 'Airport Transfer'
+  }
+}
+[2026-07-29T22:15:24.418Z] [DEBUG] ← 200 POST /booking 

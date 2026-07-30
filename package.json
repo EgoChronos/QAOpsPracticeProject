@@ -1,0 +1,60 @@
+{
+  "name": "qaops-playwright-framework",
+  "version": "1.0.0",
+  "description": "Production-quality Playwright + TypeScript QA automation framework for learning QAOps practices",
+  "author": "QA Automation Engineer",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "ui": "playwright test --project=chromium tests/ui",
+    "ui:headed": "playwright test --project=chromium tests/ui --headed",
+    "api": "playwright test tests/api",
+    "smoke": "playwright test --grep @smoke",
+    "regression": "playwright test --grep @regression",
+    "try": "playwright test --grep @try",
+    "sanity": "playwright test --grep @sanity",
+    "headed": "playwright test --headed",
+    "debug": "playwright test --debug",
+    "ci": "playwright test --reporter=github,allure-playwright,html",
+    "report": "playwright show-report playwright-report",
+    "allure:generate": "allure generate reporting/allure-results --clean -o reporting/allure-report",
+    "allure:open": "allure open reporting/allure-report",
+    "allure": "npm run allure:generate && npm run allure:open",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "clean": "rimraf playwright-report test-results reporting/allure-results reporting/allure-report",
+    "install:browsers": "playwright install",
+    "install:browsers:deps": "playwright install --with-deps",
+    "type-check": "tsc --noEmit",
+    "pretest": "npm run type-check"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@azure/identity": "^4.13.1",
+    "@azure/playwright": "^1.1.6",
+    "@faker-js/faker": "^9.3.0",
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "allure-js-commons": "^3.0.4",
+    "allure-playwright": "^3.0.4",
+    "eslint": "^9.16.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-playwright": "^2.1.0",
+    "prettier": "^3.4.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,27 @@
+[2026-07-29T22:15:19.035Z] [DEBUG] → POST https://restful-booker.herokuapp.com/booking {
+  params: undefined,
+  data: {
+    firstname: 'Estelle',
+    lastname: 'Rosenbaum',
+    totalprice: 3538,
+    depositpaid: true,
+    bookingdates: { checkin: '2026-08-28', checkout: '2026-09-05' },
+    additionalneeds: 'Dinner'
+  }
+}
+[2026-07-29T22:15:19.612Z] [DEBUG] ← 200 POST /booking 
+[2026-07-29T22:15:19.612Z] [INFO ] Created booking: 2539 
+[2026-07-29T22:15:19.618Z] [INFO ] Fetching auth token for user: admin 
+[2026-07-29T22:15:19.618Z] [DEBUG] → POST https://restful-booker.herokuapp.com/auth {
+  params: undefined,
+  data: { username: 'admin', password: 'password' }
+}
+[2026-07-29T22:15:19.757Z] [DEBUG] ← 200 POST /auth 
+[2026-07-29T22:15:19.766Z] [DEBUG] Running booking service cleanup... 
+[2026-07-29T22:15:19.767Z] [INFO ] Cleaning up 1 booking(s): 2539 
+[2026-07-29T22:15:19.767Z] [INFO ] Fetching auth token for user: admin 
+[2026-07-29T22:15:19.768Z] [DEBUG] → POST https://restful-booker.herokuapp.com/auth {
+  params: undefined,
+  data: { username: 'admin', password: 'password' }
+}
+[2026-07-29T22:15:19.906Z] [DEBUG] ← 200 POST /auth 
