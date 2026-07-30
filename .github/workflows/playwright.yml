@@ -34,6 +34,7 @@ on:
           - regression
           - api
           - ui
+          - try
 
   # Scheduled regression run — every day at 6 AM UTC
   schedule:
