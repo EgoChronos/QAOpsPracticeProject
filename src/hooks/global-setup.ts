@@ -33,6 +33,9 @@ async function globalSetup(_config: FullConfig): Promise<void> {
   logger.info(`API URL      : ${env.apiUrl}`);
   logger.info(`Admin User   : ${env.adminUsername}`);
   logger.info(`CI Mode      : ${env.isCI}`);
+  if (env.playwrightServiceUrl) {
+    logger.info(`Service URL  : ${env.playwrightServiceUrl}`);
+  }
   logger.info('='.repeat(60));
 
   // -------------------------------------------------------------------------

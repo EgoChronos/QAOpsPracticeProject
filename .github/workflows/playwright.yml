@@ -73,11 +73,19 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps ${{ matrix.browser }}
 
+      - name: Azure login
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Run smoke tests
-        run: npx playwright test --grep @smoke --project=${{ matrix.browser }}
+        run: npx playwright test --config=playwright.service.config.ts --grep @smoke --project=${{ matrix.browser }}
         env:
           CI: true
           TEST_ENV: staging
+          PLAYWRIGHT_SERVICE_URL: ${{ secrets.PLAYWRIGHT_SERVICE_URL }}
           BASE_URL: ${{ secrets.STAGING_BASE_URL || 'https://automationintesting.online' }}
           API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}
@@ -140,11 +148,19 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Azure login
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Run regression tests (shard ${{ matrix.shard }}/4)
-        run: npx playwright test --shard=${{ matrix.shard }}/4 --project=chromium
+        run: npx playwright test --config=playwright.service.config.ts --shard=${{ matrix.shard }}/4 --project=chromium
         env:
           CI: true
           TEST_ENV: ${{ github.event.inputs.environment || 'staging' }}
+          PLAYWRIGHT_SERVICE_URL: ${{ secrets.PLAYWRIGHT_SERVICE_URL }}
           BASE_URL: ${{ secrets.STAGING_BASE_URL || 'https://automationintesting.online' }}
           API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}

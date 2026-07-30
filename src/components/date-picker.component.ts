@@ -25,26 +25,26 @@ export class DatePickerComponent {
 
   /** The date picker calendar container */
   get calendar(): Locator {
-    return this.page.locator('.rdrCalendarWrapper, [class*="calendar"], [class*="datepicker"]').first();
+    return this.page
+      .locator('.rdrCalendarWrapper, [class*="calendar"], [class*="datepicker"]')
+      .first();
   }
 
   /** Individual day cells in the calendar */
   get dayCells(): Locator {
-    return this.page.locator('.rdrDay:not(.rdrDayPassive), [class*="day"]:not([class*="disabled"])');
+    return this.page.locator(
+      '.rdrDay:not(.rdrDayPassive), [class*="day"]:not([class*="disabled"])',
+    );
   }
 
   /** Check-in date input field */
   get checkinInput(): Locator {
-    return this.page.locator(
-      'input[name="checkin"], input[placeholder*="Check in"], #checkin',
-    );
+    return this.page.locator('input[name="checkin"], input[placeholder*="Check in"], #checkin');
   }
 
   /** Check-out date input field */
   get checkoutInput(): Locator {
-    return this.page.locator(
-      'input[name="checkout"], input[placeholder*="Check out"], #checkout',
-    );
+    return this.page.locator('input[name="checkout"], input[placeholder*="Check out"], #checkout');
   }
 
   // ---------------------------------------------------------------------------
@@ -65,11 +65,13 @@ export class DatePickerComponent {
     await this.page.locator('[data-testid="BookButton"], button:has-text("Book")').first().click();
 
     // Wait for calendar to appear
-    await this.page.waitForSelector('.rdrCalendarWrapper, [class*="calendar"]', {
-      timeout: 5000,
-    }).catch(() => {
-      // Calendar might already be visible
-    });
+    await this.page
+      .waitForSelector('.rdrCalendarWrapper, [class*="calendar"]', {
+        timeout: 5000,
+      })
+      .catch(() => {
+        // Calendar might already be visible
+      });
 
     await this.selectCheckinDate(checkin);
     await this.selectCheckoutDate(checkout);

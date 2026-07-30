@@ -94,6 +94,9 @@ export const env = {
 
   /** Whether the test run is happening inside a CI pipeline */
   isCI: getBooleanEnvVar('CI', false),
+
+  /** Playwright Service URL for Azure Playwright Service */
+  playwrightServiceUrl: getOptionalEnvVar('PLAYWRIGHT_SERVICE_URL'),
 } as const;
 
 // Type export so callers can type their config parameters

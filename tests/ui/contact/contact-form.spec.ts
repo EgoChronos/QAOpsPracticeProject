@@ -43,23 +43,22 @@ test.describe('Contact Form', () => {
     await contactPage.expectSuccessMessageVisible();
   });
 
-  test(
-    'should show submitter name in success confirmation @regression @contact',
-    async ({ contactPage }) => {
-      const name = faker.person.fullName();
+  test('should show submitter name in success confirmation @regression @contact', async ({
+    contactPage,
+  }) => {
+    const name = faker.person.fullName();
 
-      await contactPage.fillForm({
-        name,
-        email: faker.internet.email(),
-        phone: randomPhone(11),
-        subject: faker.lorem.words(5),
-        message: faker.lorem.sentences(3),
-      });
-      await contactPage.submit();
+    await contactPage.fillForm({
+      name,
+      email: faker.internet.email(),
+      phone: randomPhone(11),
+      subject: faker.lorem.words(5),
+      message: faker.lorem.sentences(3),
+    });
+    await contactPage.submit();
 
-      await contactPage.expectSuccessWithName(name);
-    },
-  );
+    await contactPage.expectSuccessWithName(name);
+  });
 
   // ---------------------------------------------------------------------------
   // Validation errors
@@ -96,7 +95,9 @@ test.describe('Contact Form', () => {
     await contactPage.expectValidationErrors();
   });
 
-  test('should show error when phone is too short @regression @contact', async ({ contactPage }) => {
+  test('should show error when phone is too short @regression @contact', async ({
+    contactPage,
+  }) => {
     await contactPage.fillForm({
       name: faker.person.fullName(),
       email: faker.internet.email(),
@@ -140,9 +141,7 @@ test.describe('Contact Form', () => {
   // Field interactions
   // ---------------------------------------------------------------------------
 
-  test('should allow filling all form fields @regression @contact', async ({
-    contactPage,
-  }) => {
+  test('should allow filling all form fields @regression @contact', async ({ contactPage }) => {
     const name = faker.person.fullName();
     const email = faker.internet.email();
     const phone = randomPhone(11);

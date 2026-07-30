@@ -111,8 +111,10 @@ export class LoginPage extends BasePage {
   async waitForAdminDashboard(): Promise<void> {
     await this.page.waitForURL(/admin/);
     // After login the URL should no longer show a login form
-    await expect(this.loginButton).not.toBeVisible({ timeout: 5000 }).catch(() => {
-      // Login button might still be visible on the admin page in some states
-    });
+    await expect(this.loginButton)
+      .not.toBeVisible({ timeout: 5000 })
+      .catch(() => {
+        // Login button might still be visible on the admin page in some states
+      });
   }
 }

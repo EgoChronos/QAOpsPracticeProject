@@ -13,12 +13,7 @@
  * allowing different auth tokens per test.
  */
 
-import axios, {
-  AxiosInstance,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-  AxiosError,
-} from 'axios';
+import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig, AxiosError } from 'axios';
 import { Timeouts } from '../../config/timeouts';
 import { logger } from '../../utils/logger';
 

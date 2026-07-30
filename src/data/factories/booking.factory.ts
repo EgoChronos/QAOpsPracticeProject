@@ -92,7 +92,9 @@ export class BookingFactory {
   /**
    * Generate deliberately invalid booking data for negative testing.
    */
-  static createInvalid(type: 'missing-name' | 'invalid-dates' | 'empty' = 'empty'): Partial<Booking> {
+  static createInvalid(
+    type: 'missing-name' | 'invalid-dates' | 'empty' = 'empty',
+  ): Partial<Booking> {
     switch (type) {
       case 'missing-name':
         return {

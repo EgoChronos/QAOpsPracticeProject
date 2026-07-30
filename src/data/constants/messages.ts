@@ -20,7 +20,7 @@ export const Messages = {
   // -------------------------------------------------------------------------
   contact: {
     successTitle: 'Thanks for getting in touch',
-    successBody: 'We\'ll get back to you about',
+    successBody: "We'll get back to you about",
     errorNameRequired: 'Name may not be blank',
     errorEmailRequired: 'Email may not be blank',
     errorPhoneRequired: 'Phone may not be blank',

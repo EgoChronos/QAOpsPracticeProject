@@ -22,32 +22,31 @@ test.describe('Authentication', () => {
   // Happy path
   // ---------------------------------------------------------------------------
 
-  test(
-    'should login successfully with valid admin credentials @smoke @auth',
-    async ({ loginPage }) => {
-      const admin = UserFactory.admin();
+  test('should login successfully with valid admin credentials @smoke @auth', async ({
+    loginPage,
+  }) => {
+    const admin = UserFactory.admin();
 
-      await loginPage.goto();
-      await loginPage.expectLoginPageVisible();
+    await loginPage.goto();
+    await loginPage.expectLoginPageVisible();
 
-      await loginPage.login({ username: admin.username, password: admin.password });
+    await loginPage.login({ username: admin.username, password: admin.password });
 
-      // After successful login, the URL should change to admin panel
-      await expect(loginPage.page).toHaveURL(/admin/, { timeout: 10_000 });
-    },
-  );
+    // After successful login, the URL should change to admin panel
+    await expect(loginPage.page).toHaveURL(/admin/, { timeout: 10_000 });
+  });
 
-  test(
-    'should display the admin dashboard after login @smoke @auth',
-    async ({ loginPage, adminPage }) => {
-      const admin = UserFactory.admin();
+  test('should display the admin dashboard after login @smoke @auth', async ({
+    loginPage,
+    adminPage,
+  }) => {
+    const admin = UserFactory.admin();
 
-      await loginPage.login({ username: admin.username, password: admin.password });
+    await loginPage.login({ username: admin.username, password: admin.password });
 
-      // Verify admin navigation is visible
-      await adminPage.expectNavLinksVisible();
-    },
-  );
+    // Verify admin navigation is visible
+    await adminPage.expectNavLinksVisible();
+  });
 
   test('should logout successfully @smoke @auth', async ({ loginPage, adminPage }) => {
     const admin = UserFactory.admin();
@@ -67,17 +66,16 @@ test.describe('Authentication', () => {
   // Error handling / negative tests
   // ---------------------------------------------------------------------------
 
-  test(
-    'should display error message with invalid credentials @regression @auth',
-    async ({ loginPage }) => {
-      await loginPage.goto();
-      await loginPage.login({ username: 'invalid_user', password: 'wrong_password' });
+  test('should display error message with invalid credentials @regression @auth', async ({
+    loginPage,
+  }) => {
+    await loginPage.goto();
+    await loginPage.login({ username: 'invalid_user', password: 'wrong_password' });
 
-      // Error message or login form should still be visible
-      // The app keeps you on the login page with invalid creds
-      await expect(loginPage.page).toHaveURL(/admin/);
-    },
-  );
+    // Error message or login form should still be visible
+    // The app keeps you on the login page with invalid creds
+    await expect(loginPage.page).toHaveURL(/admin/);
+  });
 
   test('should not login with empty username @regression @auth', async ({ loginPage }) => {
     await loginPage.goto();
@@ -109,19 +107,18 @@ test.describe('Authentication', () => {
   // Session handling
   // ---------------------------------------------------------------------------
 
-  test(
-    'should redirect to admin panel if already authenticated @regression @auth',
-    async ({ loginPage }) => {
-      const admin = UserFactory.admin();
+  test('should redirect to admin panel if already authenticated @regression @auth', async ({
+    loginPage,
+  }) => {
+    const admin = UserFactory.admin();
 
-      // Login and navigate away
-      await loginPage.login({ username: admin.username, password: admin.password });
-      await loginPage.page.waitForURL(/admin/);
+    // Login and navigate away
+    await loginPage.login({ username: admin.username, password: admin.password });
+    await loginPage.page.waitForURL(/admin/);
 
-      // Navigate to admin URL again — should stay in admin (session preserved)
-      await loginPage.page.goto('/admin');
-      // URL should remain in the admin area (session is preserved)
-      await expect(loginPage.page).toHaveURL(/admin/);
-    },
-  );
+    // Navigate to admin URL again — should stay in admin (session preserved)
+    await loginPage.page.goto('/admin');
+    // URL should remain in the admin area (session is preserved)
+    await expect(loginPage.page).toHaveURL(/admin/);
+  });
 });

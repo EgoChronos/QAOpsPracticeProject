@@ -41,9 +41,9 @@ export class HomePage extends BasePage {
 
   // Booking success modal / confirmation
   get bookingSuccessMessage(): Locator {
-    return this.page.locator('.booking-confirmation, [class*="confirmation"]').or(
-      this.page.getByText(/Booking Successful/i),
-    );
+    return this.page
+      .locator('.booking-confirmation, [class*="confirmation"]')
+      .or(this.page.getByText(/Booking Successful/i));
   }
 
   get closeBookingButton(): Locator {

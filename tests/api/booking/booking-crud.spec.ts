@@ -15,7 +15,11 @@
 
 import { test, expect } from '../../../src/fixtures/base.fixture';
 import { BookingFactory } from '../../../src/data/factories/booking.factory';
-import { BookingSchema, BookingIdListSchema, CreateBookingResponseSchema } from '../../../src/api/schemas/booking.schema';
+import {
+  BookingSchema,
+  BookingIdListSchema,
+  CreateBookingResponseSchema,
+} from '../../../src/api/schemas/booking.schema';
 
 test.describe('Booking API — CRUD', () => {
   // ---------------------------------------------------------------------------
@@ -51,9 +55,7 @@ test.describe('Booking API — CRUD', () => {
     }) => {
       // Create a booking with a unique first name
       const uniqueName = `TestUser${Date.now()}`;
-      await bookingService.createBooking(
-        BookingFactory.create({ firstname: uniqueName }),
-      );
+      await bookingService.createBooking(BookingFactory.create({ firstname: uniqueName }));
 
       // Filter by that name
       const allIds = await bookingService.getAllIds({ firstname: uniqueName });

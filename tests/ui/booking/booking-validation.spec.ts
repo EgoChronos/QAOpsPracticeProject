@@ -29,51 +29,47 @@ test.describe('Booking Form Validation', () => {
     }
   });
 
-  test(
-    'should show validation errors when booking form is submitted empty @regression @validation',
-    async ({ page }) => {
-      // Try to submit an empty form
-      const submitBtn = page.getByRole('button', { name: /^book$/i }).first();
-      const isVisible = await submitBtn.isVisible({ timeout: 3000 }).catch(() => false);
+  test('should show validation errors when booking form is submitted empty @regression @validation', async ({
+    page,
+  }) => {
+    // Try to submit an empty form
+    const submitBtn = page.getByRole('button', { name: /^book$/i }).first();
+    const isVisible = await submitBtn.isVisible({ timeout: 3000 }).catch(() => false);
 
-      if (isVisible) {
-        await submitBtn.click();
-        // Some error feedback should appear
-        await page.waitForTimeout(1000);
-        // The form should still be visible (not successfully submitted)
-        await expect(submitBtn).toBeVisible();
-      }
-    },
-  );
-
-  test(
-    'should require valid phone number format @regression @validation',
-    async ({ page }) => {
-      // Fill in all required fields except phone with an invalid value
-      const firstname = page.locator('input[name="firstname"]').first();
-      const lastname = page.locator('input[name="lastname"]').first();
-      const email = page.locator('input[name="email"]').first();
-      const phone = page.locator('input[name="phone"]').first();
-
-      const firstnameVisible = await firstname.isVisible({ timeout: 3000 }).catch(() => false);
-      if (!firstnameVisible) {
-        test.skip();
-        return;
-      }
-
-      await firstname.fill('John');
-      await lastname.fill('Doe');
-      await email.fill('john.doe@example.com');
-      await phone.fill('123'); // Too short
-
-      const submitBtn = page.getByRole('button', { name: /^book$/i }).first();
+    if (isVisible) {
       await submitBtn.click();
-
+      // Some error feedback should appear
       await page.waitForTimeout(1000);
-      // Form should not have succeeded — should still be visible
+      // The form should still be visible (not successfully submitted)
       await expect(submitBtn).toBeVisible();
-    },
-  );
+    }
+  });
+
+  test('should require valid phone number format @regression @validation', async ({ page }) => {
+    // Fill in all required fields except phone with an invalid value
+    const firstname = page.locator('input[name="firstname"]').first();
+    const lastname = page.locator('input[name="lastname"]').first();
+    const email = page.locator('input[name="email"]').first();
+    const phone = page.locator('input[name="phone"]').first();
+
+    const firstnameVisible = await firstname.isVisible({ timeout: 3000 }).catch(() => false);
+    if (!firstnameVisible) {
+      test.skip();
+      return;
+    }
+
+    await firstname.fill('John');
+    await lastname.fill('Doe');
+    await email.fill('john.doe@example.com');
+    await phone.fill('123'); // Too short
+
+    const submitBtn = page.getByRole('button', { name: /^book$/i }).first();
+    await submitBtn.click();
+
+    await page.waitForTimeout(1000);
+    // Form should not have succeeded — should still be visible
+    await expect(submitBtn).toBeVisible();
+  });
 
   test('should accept valid phone number with 11 digits @regression @validation', async ({
     page,
