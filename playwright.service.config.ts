@@ -33,11 +33,11 @@ export default defineConfig(
         'allure-playwright',
         {
           detail: true,
-          outputFolder: process.env.ALLURE_RESULTS_DIR ?? 'reporting/allure-results',
+          outputFolder: process.env.ALLURE_RESULTS_DIR || 'reporting/allure-results',
           environmentInfo: {
-            Environment: process.env.TEST_ENV ?? 'local',
-            BaseURL: process.env.BASE_URL ?? 'https://automationintesting.online',
-            ApiURL: process.env.API_URL ?? 'https://restful-booker.herokuapp.com',
+            Environment: process.env.TEST_ENV || 'local',
+            BaseURL: process.env.BASE_URL || 'https://automationintesting.online',
+            ApiURL: process.env.API_URL || 'https://restful-booker.herokuapp.com',
             NodeVersion: process.version,
             Platform: process.platform,
           },
