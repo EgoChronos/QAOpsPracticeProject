@@ -239,7 +239,9 @@ jobs:
         # Only merge if blob reports were actually produced (e.g. when tests
         # ran with the service config / blob reporter enabled).
         run: |
-          if ls all-blob-reports/*.zip >/dev/null 2>&1; then
+          if compgen -G "all-blob-reports/*.zip" > /dev/null; then
+            echo "Merging $(ls all-blob-reports/*.zip | wc -l) blob report(s):"
+            ls all-blob-reports/*.zip
             npx playwright merge-reports --reporter html ./all-blob-reports
           else
             echo "No blob reports found — skipping merge."

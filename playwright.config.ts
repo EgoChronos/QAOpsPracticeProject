@@ -69,7 +69,10 @@ export default defineConfig({
       'allure-playwright',
       {
         detail: true,
-        outputFolder: process.env.ALLURE_RESULTS_DIR || 'reporting/allure-results',
+        // allure-playwright v3 option is `resultsDir` (not `outputFolder`,
+        // which was the v2 name and is silently ignored -> results were
+        // always written to ./allure-results regardless of this setting).
+        resultsDir: process.env.ALLURE_RESULTS_DIR || 'reporting/allure-results',
         suiteTitle: true,
         categories: [
           {

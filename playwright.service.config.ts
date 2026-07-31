@@ -28,12 +28,19 @@ export default defineConfig(
     reporter: [
       ['list'],
       ['html', { open: 'never' }],
-      ['blob', { outputFile: 'blob-report/blob-report.zip' }],
+      // NOTE: no hardcoded `outputFile` for the blob reporter!
+      // Every shard must write a *unique* blob filename (Playwright appends
+      // a shard-specific suffix automatically). Otherwise all shards write
+      // to the same `blob-report/blob-report.zip` and the merge job ends up
+      // with a truncated/corrupt zip -> `playwright merge-reports` fails.
+      ['blob'],
       [
         'allure-playwright',
         {
           detail: true,
-          outputFolder: process.env.ALLURE_RESULTS_DIR || 'reporting/allure-results',
+          // allure-playwright v3 option is `resultsDir` (not `outputFolder`,
+          // which was the v2 name and is silently ignored).
+          resultsDir: process.env.ALLURE_RESULTS_DIR || 'reporting/allure-results',
           environmentInfo: {
             Environment: process.env.TEST_ENV || 'local',
             BaseURL: process.env.BASE_URL || 'https://automationintesting.online',
