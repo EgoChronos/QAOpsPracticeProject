@@ -89,7 +89,7 @@ jobs:
         env:
           CI: true
           TEST_ENV: staging
-          PLAYWRIGHT_SERVICE_URL: ${{ secrets.PLAYWRIGHT_SERVICE_URL }}
+          PLAYWRIGHT_SERVICE_URL: ${{ vars.PLAYWRIGHT_SERVICE_URL }}
           BASE_URL: ${{ secrets.STAGING_BASE_URL || 'https://automationintesting.online' }}
           API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}
@@ -164,7 +164,7 @@ jobs:
         env:
           CI: true
           TEST_ENV: ${{ github.event.inputs.environment || 'staging' }}
-          PLAYWRIGHT_SERVICE_URL: ${{ secrets.PLAYWRIGHT_SERVICE_URL }}
+          PLAYWRIGHT_SERVICE_URL: ${{ vars.PLAYWRIGHT_SERVICE_URL }}
           BASE_URL: ${{ secrets.STAGING_BASE_URL || 'https://automationintesting.online' }}
           API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}
