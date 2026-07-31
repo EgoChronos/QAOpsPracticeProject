@@ -75,6 +75,14 @@ export class AdminPage extends BasePage {
   // Actions
   // ---------------------------------------------------------------------------
 
+  /** Navigate to admin panel and wait for the authenticated shell to render */
+  async goto(): Promise<void> {
+    await super.goto();
+    // Wait for the logout link as a signal that the authenticated nav bar has rendered.
+    // The site is a React SPA — networkidle alone is not always enough on slow runners.
+    await this.logoutLink.waitFor({ state: 'visible', timeout: 20_000 });
+  }
+
   /** Click the Rooms navigation link */
   async navigateToRooms(): Promise<void> {
     await this.roomsNavLink.click();

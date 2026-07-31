@@ -43,7 +43,7 @@ export abstract class BasePage {
 
   /** Wait for the page to reach a stable state */
   async waitForPageLoad(): Promise<void> {
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState('networkidle');
   }
 
   /** Get the current page URL */

@@ -59,8 +59,19 @@ export class HomePage extends BasePage {
     await this.bookRoomButton.click();
   }
 
+  /** Navigate to home page and wait for it to render */
+  async goto(): Promise<void> {
+    await super.goto();
+    // Wait for the heading as a signal that React has rendered the page
+    await this.pageHeading.waitFor({ state: 'visible', timeout: 15_000 });
+  }
+
   /** Get the count of room cards displayed */
   async getRoomCount(): Promise<number> {
+    // Wait for at least one room card to appear before counting
+    await this.firstRoomCard
+      .waitFor({ state: 'visible', timeout: 15_000 })
+      .catch(() => { /* no rooms available — count will be 0 */ });
     return this.roomCards.count();
   }
 
