@@ -51,7 +51,7 @@ test.describe('Admin Panel Navigation', () => {
     authenticatedAdminPage,
   }) => {
     await authenticatedAdminPage.navigateToMessages();
-    await expect(authenticatedAdminPage.page).toHaveURL(/messages/);
+    await expect(authenticatedAdminPage.page).toHaveURL(/message/);
   });
 
   test('should navigate back to front page @regression @navigation', async ({

@@ -85,7 +85,14 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Run smoke tests
-        run: npx playwright test --config=playwright.service.config.ts --grep @smoke --project=${{ matrix.browser }}
+        # Use the Azure Playwright service config only when the service URL is
+        # configured; otherwise fall back to plain local-browser config.
+        run: |
+          if [ -n "$PLAYWRIGHT_SERVICE_URL" ]; then
+            npx playwright test --config=playwright.service.config.ts --grep @smoke --project=${{ matrix.browser }}
+          else
+            npx playwright test --config=playwright.config.ts --grep @smoke --project=${{ matrix.browser }}
+          fi
         env:
           CI: true
           TEST_ENV: staging
@@ -94,6 +101,7 @@ jobs:
           API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'password123' }}
+          UI_ADMIN_PASSWORD: ${{ secrets.UI_ADMIN_PASSWORD || 'password' }}
           ALLURE_RESULTS_DIR: reporting/allure-results
 
       - name: Upload Playwright Report
@@ -103,6 +111,7 @@ jobs:
           name: playwright-report-smoke-${{ matrix.browser }}
           path: playwright-report/
           retention-days: 30
+          if-no-files-found: ignore
 
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4
@@ -111,6 +120,7 @@ jobs:
           name: allure-results-smoke-${{ matrix.browser }}
           path: reporting/allure-results/
           retention-days: 30
+          if-no-files-found: ignore
 
       - name: Upload Test Artifacts
         uses: actions/upload-artifact@v4
@@ -121,6 +131,7 @@ jobs:
             test-results/
             reporting/allure-results/
           retention-days: 7
+          if-no-files-found: ignore
 
   # -------------------------------------------------------------------------
   # Full Regression — Runs on push to main and scheduled
@@ -160,7 +171,12 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Run regression tests (shard ${{ matrix.shard }}/4)
-        run: npx playwright test --config=playwright.service.config.ts --shard=${{ matrix.shard }}/4 --project=chromium
+        run: |
+          if [ -n "$PLAYWRIGHT_SERVICE_URL" ]; then
+            npx playwright test --config=playwright.service.config.ts --shard=${{ matrix.shard }}/4 --project=chromium
+          else
+            npx playwright test --config=playwright.config.ts --shard=${{ matrix.shard }}/4 --project=chromium
+          fi
         env:
           CI: true
           TEST_ENV: ${{ github.event.inputs.environment || 'staging' }}
@@ -169,6 +185,7 @@ jobs:
           API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'password123' }}
+          UI_ADMIN_PASSWORD: ${{ secrets.UI_ADMIN_PASSWORD || 'password' }}
           ALLURE_RESULTS_DIR: reporting/allure-results
 
       - name: Upload blob report
@@ -178,6 +195,7 @@ jobs:
           name: blob-report-${{ matrix.shard }}
           path: blob-report/
           retention-days: 1
+          if-no-files-found: ignore
 
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4
@@ -186,6 +204,7 @@ jobs:
           name: allure-results-${{ matrix.shard }}
           path: reporting/allure-results/
           retention-days: 30
+          if-no-files-found: ignore
 
   # -------------------------------------------------------------------------
   # Merge Reports — Combines sharded reports into one
@@ -217,7 +236,14 @@ jobs:
           merge-multiple: true
 
       - name: Merge Playwright reports
-        run: npx playwright merge-reports --reporter html ./all-blob-reports
+        # Only merge if blob reports were actually produced (e.g. when tests
+        # ran with the service config / blob reporter enabled).
+        run: |
+          if ls all-blob-reports/*.zip >/dev/null 2>&1; then
+            npx playwright merge-reports --reporter html ./all-blob-reports
+          else
+            echo "No blob reports found — skipping merge."
+          fi
 
       - name: Download Allure results
         uses: actions/download-artifact@v4
@@ -230,28 +256,41 @@ jobs:
         run: npm install -g allure-commandline
 
       - name: Generate Allure report
-        run: allure generate reporting/allure-results --clean -o reporting/allure-report
+        # allure generate fails on empty/missing results dir — guard it.
+        run: |
+          if [ -d reporting/allure-results ] && [ "$(ls -A reporting/allure-results 2>/dev/null)" ]; then
+            allure generate reporting/allure-results --clean -o reporting/allure-report
+          else
+            echo "No Allure results found — skipping report generation."
+            mkdir -p reporting/allure-report
+          fi
 
       - name: Upload merged HTML report
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: playwright-report-full
           path: playwright-report/
           retention-days: 30
+          if-no-files-found: ignore
 
       - name: Upload Allure HTML report
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: allure-report-full
           path: reporting/allure-report/
           retention-days: 30
+          if-no-files-found: ignore
 
       - name: Upload JUnit XML
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: junit-results
           path: test-results/results.xml
           retention-days: 30
+          if-no-files-found: ignore
 
   # -------------------------------------------------------------------------
   # API Tests — Separate job, no browser needed
@@ -278,7 +317,7 @@ jobs:
         run: npx playwright install
 
       - name: Run API tests
-        run: npx playwright test tests/api --project=api
+        run: npx playwright test tests/api --project=api --config=playwright.config.ts
         env:
           CI: true
           TEST_ENV: staging
@@ -298,3 +337,4 @@ jobs:
             reporting/allure-results/
             test-results/results.xml
           retention-days: 30
+          if-no-files-found: ignore

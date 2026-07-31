@@ -80,7 +80,16 @@ export const env = {
 
   /** Admin credentials */
   adminUsername: getEnvVar('ADMIN_USERNAME', 'admin'),
-  adminPassword: getEnvVar('ADMIN_PASSWORD', 'password'),
+  adminPassword: getEnvVar('ADMIN_PASSWORD', 'password123'),
+
+  /**
+   * Admin password for the UI app under test (automationintesting.online).
+   * The web app (restful-booker v2.2) uses a DIFFERENT default password than
+   * the legacy Restful Booker API (restful-booker.herokuapp.com).
+   *   - UI app:    admin / password
+   *   - Legacy API: admin / password123
+   */
+  uiAdminPassword: getEnvVar('UI_ADMIN_PASSWORD', 'password'),
 
   /** Optional static test user (created dynamically if blank) */
   testUserUsername: getOptionalEnvVar('TEST_USER_USERNAME'),

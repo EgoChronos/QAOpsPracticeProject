@@ -31,7 +31,9 @@ export class LoginPage extends BasePage {
   }
 
   get errorMessage(): Locator {
-    return this.page.locator('.alert-danger, [class*="error"], p:has-text("Bad credentials")');
+    return this.page.locator(
+      '.alert-danger, [class*="error"], p:has-text("Bad credentials"), p:has-text("Invalid credentials")',
+    );
   }
 
   get adminDashboard(): Locator {

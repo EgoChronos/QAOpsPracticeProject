@@ -24,7 +24,10 @@ export class HomePage extends BasePage {
   }
 
   get bookRoomButton(): Locator {
-    return this.page.getByRole('button', { name: /book this room|book now/i }).first();
+    // Current app renders "Book now" as a LINK (anchor) per room card that
+    // navigates to /reservation/:id. Match the reservation links specifically
+    // to avoid the navbar's "#booking" anchor.
+    return this.page.locator('a[href*="/reservation/"]').first();
   }
 
   get pageHeading(): Locator {

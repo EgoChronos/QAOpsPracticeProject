@@ -25,7 +25,7 @@ test.describe('Authentication', () => {
   test('should login successfully with valid admin credentials @smoke @auth', async ({
     loginPage,
   }) => {
-    const admin = UserFactory.admin();
+    const admin = UserFactory.uiAdmin();
 
     await loginPage.goto();
     await loginPage.expectLoginPageVisible();
@@ -40,7 +40,7 @@ test.describe('Authentication', () => {
     loginPage,
     adminPage,
   }) => {
-    const admin = UserFactory.admin();
+    const admin = UserFactory.uiAdmin();
 
     await loginPage.login({ username: admin.username, password: admin.password });
 
@@ -49,11 +49,15 @@ test.describe('Authentication', () => {
   });
 
   test('should logout successfully @smoke @auth', async ({ loginPage, adminPage }) => {
-    const admin = UserFactory.admin();
+    const admin = UserFactory.uiAdmin();
 
     // Login first
     await loginPage.login({ username: admin.username, password: admin.password });
     await loginPage.page.waitForURL(/admin/);
+
+    // Wait for the authenticated admin shell to be fully rendered before
+    // interacting — otherwise the logout click can race the login redirect.
+    await adminPage.waitForReady();
 
     // Then logout
     await adminPage.logout();
@@ -110,7 +114,7 @@ test.describe('Authentication', () => {
   test('should redirect to admin panel if already authenticated @regression @auth', async ({
     loginPage,
   }) => {
-    const admin = UserFactory.admin();
+    const admin = UserFactory.uiAdmin();
 
     // Login and navigate away
     await loginPage.login({ username: admin.username, password: admin.password });

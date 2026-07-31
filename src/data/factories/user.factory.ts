@@ -40,6 +40,20 @@ export class UserFactory {
   }
 
   /**
+   * Return the admin user for the WEB APP UI (automationintesting.online).
+   * The web app uses a different default password ('password') than the
+   * legacy Restful Booker API ('password123'). UI login tests must use
+   * this, otherwise the app rejects the credentials.
+   */
+  static uiAdmin(): TestUser {
+    return {
+      username: env.adminUsername,
+      password: env.uiAdminPassword,
+      role: 'admin',
+    };
+  }
+
+  /**
    * Create a guest user (no authentication required).
    */
   static guest(): TestUser {

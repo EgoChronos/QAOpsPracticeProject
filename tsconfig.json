@@ -5,6 +5,7 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "outDir": "dist",
+    "ignoreDeprecations": "5.0",
     "rootDir": ".",
     "strict": true,
     "noImplicitAny": true,
@@ -19,21 +20,20 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "baseUrl": ".",
     "paths": {
-      "@src/*": ["src/*"],
-      "@tests/*": ["tests/*"],
-      "@fixtures/*": ["src/fixtures/*"],
-      "@pages/*": ["src/pages/*"],
-      "@components/*": ["src/components/*"],
-      "@models/*": ["src/models/*"],
-      "@utils/*": ["src/utils/*"],
-      "@helpers/*": ["src/helpers/*"],
-      "@data/*": ["src/data/*"],
-      "@api/*": ["src/api/*"],
-      "@config/*": ["src/config/*"]
+      "@src/*": ["./src/*"],
+      "@tests/*": ["./tests/*"],
+      "@fixtures/*": ["./src/fixtures/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@components/*": ["./src/components/*"],
+      "@models/*": ["./src/models/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@helpers/*": ["./src/helpers/*"],
+      "@data/*": ["./src/data/*"],
+      "@api/*": ["./src/api/*"],
+      "@config/*": ["./src/config/*"]
     }
   },
-  "include": ["src/**/*", "tests/**/*", "playwright.config.ts"],
+  "include": ["src/**/*", "tests/**/*", "playwright.config.ts", "playwright.service.config.ts"],
   "exclude": ["node_modules", "dist", "playwright-report", "test-results", "reporting"]
 }

@@ -33,8 +33,13 @@ export class AdminPage extends BasePage {
     return this.page.getByRole('link', { name: /messages/i });
   }
 
+  /**
+   * Logout control.
+   * In the current app (automationintesting.online) logout is rendered as
+   * a BUTTON, not a link — using getByRole('button') matches both reliably.
+   */
   get logoutLink(): Locator {
-    return this.page.getByRole('link', { name: /logout/i });
+    return this.page.getByRole('button', { name: /logout/i });
   }
 
   // Dashboard elements
@@ -78,8 +83,20 @@ export class AdminPage extends BasePage {
   /** Navigate to admin panel and wait for the authenticated shell to render */
   async goto(): Promise<void> {
     await super.goto();
-    // Wait for the logout link as a signal that the authenticated nav bar has rendered.
-    // The site is a React SPA — networkidle alone is not always enough on slow runners.
+    await this.waitForReady();
+  }
+
+  /**
+   * Wait until the authenticated admin shell has fully settled.
+   *
+   * The login POST triggers a redirect that passes through `/admin` before
+   * reaching the final authenticated route `/admin/rooms`. Interacting during
+   * that transition loses clicks (React re-renders the tree), so we first
+   * wait for the settled route, then for the logout button — a reliable
+   * signal that the admin session is active.
+   */
+  async waitForReady(): Promise<void> {
+    await this.page.waitForURL(/admin\/rooms/, { timeout: 20_000 });
     await this.logoutLink.waitFor({ state: 'visible', timeout: 20_000 });
   }
 
@@ -104,13 +121,22 @@ export class AdminPage extends BasePage {
   /** Click the Messages navigation link */
   async navigateToMessages(): Promise<void> {
     await this.messagesNavLink.click();
-    await this.page.waitForURL(/messages/);
+    // The app uses /admin/message (singular) — wait for either spelling.
+    await this.page.waitForURL(/message/);
   }
 
   /** Perform admin logout */
   async logout(): Promise<void> {
-    await this.logoutLink.click();
-    await this.page.waitForURL(/\//);
+    // Capture the logout navigation concurrently with the click — the click
+    // itself triggers a client-side route change, so waiting on it first is
+    // more reliable than racing the click with a waitForURL.
+    await Promise.all([
+      this.page.waitForURL(
+        (url) => !url.pathname.startsWith('/admin'),
+        { timeout: 10_000 },
+      ),
+      this.logoutLink.click(),
+    ]);
   }
 
   /**

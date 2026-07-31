@@ -10,17 +10,20 @@
  */
 
 import { AuthClient } from '../clients/auth.client';
+import { UiAuthClient } from '../clients/ui-auth.client';
 import { AuthCredentials, AuthToken, StoredAuthState } from '../../models/auth.model';
 import { env } from '../../config/env';
 import { logger } from '../../utils/logger';
 
 export class AuthService {
   private readonly client: AuthClient;
+  private readonly uiClient: UiAuthClient;
   private cachedToken: string | null = null;
   private tokenExpiry: number | null = null;
 
   constructor() {
     this.client = new AuthClient();
+    this.uiClient = new UiAuthClient();
   }
 
   /**
@@ -51,12 +54,29 @@ export class AuthService {
 
   /**
    * Get admin token using credentials from environment config.
+   * NOTE: this targets the LEGACY Restful Booker API (env.apiUrl).
    */
   async getAdminToken(): Promise<string> {
     return this.getToken({
       username: env.adminUsername,
       password: env.adminPassword,
     });
+  }
+
+  /**
+   * Get a session token for the WEB APP admin panel (env.baseUrl).
+   * The web app (automationintesting.online) uses a different login
+   * endpoint (POST /api/auth/login) and a different default password
+   * than the legacy API. UI tests MUST use this token for the session
+   * cookie — a token from the legacy API will NOT authenticate the app.
+   */
+  async getUiAdminToken(): Promise<string> {
+    const creds = {
+      username: env.adminUsername,
+      password: env.uiAdminPassword,
+    };
+    logger.info(`Fetching UI auth token for user: ${creds.username}`);
+    return this.uiClient.getToken(creds);
   }
 
   /**
@@ -83,13 +103,15 @@ export class AuthService {
 
   /**
    * Build a StoredAuthState object for persistence to disk.
+   * Uses the WEB APP session token — the stored state represents an
+   * authenticated UI session (consumed by authenticated fixtures).
    */
   async buildStoredState(credentials?: AuthCredentials): Promise<StoredAuthState> {
     const creds = credentials ?? {
       username: env.adminUsername,
-      password: env.adminPassword,
+      password: env.uiAdminPassword,
     };
-    const token = await this.getToken(creds);
+    const token = await this.uiClient.getToken(creds);
     return {
       token,
       username: creds.username,

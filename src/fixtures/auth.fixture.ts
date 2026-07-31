@@ -36,8 +36,9 @@ export const test = baseTest.extend<AuthFixtures>({
    * The context is created fresh per test (isolated), not shared.
    */
   authenticatedContext: async ({ browser, authService }, use) => {
-    // Get a valid admin token via API
-    const token = await authService.getAdminToken();
+    // Get a valid admin session token from the WEB APP's own login endpoint.
+    // (A token from the legacy API does NOT authenticate the web app UI.)
+    const token = await authService.getUiAdminToken();
     logger.debug('Creating authenticated browser context');
 
     // Create a new isolated browser context

@@ -25,6 +25,7 @@ import { LoginPage } from '../pages/login.page';
 import { AdminPage } from '../pages/admin.page';
 import { HomePage } from '../pages/home.page';
 import { ContactPage } from '../pages/contact.page';
+import { ReservationPage } from '../pages/reservation.page';
 import { BookingService } from '../api/services/booking.service';
 import { AuthService } from '../api/services/auth.service';
 import { BookingClient } from '../api/clients/booking.client';
@@ -42,6 +43,7 @@ export type PageFixtures = {
   adminPage: AdminPage;
   homePage: HomePage;
   contactPage: ContactPage;
+  reservationPage: ReservationPage;
   navBar: NavbarComponent;
 };
 
@@ -87,6 +89,11 @@ export const test = base.extend<AllFixtures>({
   contactPage: async ({ page }, use) => {
     const contactPage = new ContactPage(page);
     await use(contactPage);
+  },
+
+  reservationPage: async ({ page }, use) => {
+    const reservationPage = new ReservationPage(page);
+    await use(reservationPage);
   },
 
   navBar: async ({ page }, use) => {

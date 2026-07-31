@@ -14,8 +14,8 @@
 import { test, expect } from '../../../src/fixtures/base.fixture';
 
 import { faker } from '@faker-js/faker';
+import { daysFromNow } from '../../../src/utils/date.utils';
 import { randomPhone } from '../../../src/utils/string.utils';
-import { addDays } from '../../../src/utils/date.utils';
 
 test.describe('Booking Flow — Home Page', () => {
   test('should display rooms on the home page @smoke @booking', async ({ homePage }) => {
@@ -32,74 +32,37 @@ test.describe('Booking Flow — Home Page', () => {
 
   test('should complete a booking with valid guest details @regression @booking', async ({
     page,
-    homePage,
+    reservationPage,
   }) => {
-    await homePage.goto();
+    // Navigate directly to the reservation page with RANDOM future dates.
+    // The home page "Book now" links always use today→tomorrow, and any fixed
+    // date window (e.g. daysFromNow(30)) repeats across retries — the app
+    // REJECTS duplicate bookings for the same room+dates (the page even
+    // crashes). Randomising the window keeps every attempt/retry/worker on
+    // different dates, so tests stay independent and parallel-safe.
+    const checkinOffset = 30 + Math.floor(Math.random() * 270); // 30–300 days out
+    await reservationPage.gotoRoom(1, {
+      checkin: daysFromNow(checkinOffset),
+      checkout: daysFromNow(checkinOffset + 3),
+    });
 
-    // Click on the first room's Book button
-    const bookButton = page
-      .getByRole('button', { name: /book this room/i })
-      .or(page.locator('button.btn-outline-primary'))
-      .first();
+    // Landing on the reservation page — booking widget should be present.
+    await reservationPage.expectBookingWidgetVisible();
 
-    // Verify book button is present
-    await expect(bookButton).toBeVisible({ timeout: 10_000 });
-    await bookButton.click();
+    // Fill in guest details and submit.
+    const guestDetails = {
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      email: faker.internet.email(),
+      phone: randomPhone(11),
+    };
+    await reservationPage.submitBooking(guestDetails);
 
-    // A booking form should appear — fill in guest details
-    const checkin = addDays(new Date(), 10);
-    const checkout = addDays(checkin, 3);
+    // A booking confirmation should appear.
+    await reservationPage.expectConfirmationVisible();
 
-    // Drag to select dates on the calendar (if present)
-    const calendarVisible = await page
-      .locator('.rdrCalendarWrapper')
-      .isVisible()
-      .catch(() => false);
-    if (calendarVisible) {
-      // Click start date then end date
-      const dayNumbers = page.locator('.rdrDayNumber span');
-      const dayCount = await dayNumbers.count();
-      if (dayCount >= 4) {
-        await dayNumbers.nth(checkin.getDate() - 1).click();
-        await dayNumbers.nth(checkout.getDate() - 1).click();
-      }
-    }
-
-    // Fill guest details
-    const firstname = faker.person.firstName();
-    const lastname = faker.person.lastName();
-
-    await page
-      .locator('input[name="firstname"]')
-      .first()
-      .fill(firstname)
-      .catch(() => {});
-    await page
-      .locator('input[name="lastname"]')
-      .first()
-      .fill(lastname)
-      .catch(() => {});
-    await page
-      .locator('input[name="email"]')
-      .first()
-      .fill(faker.internet.email())
-      .catch(() => {});
-    await page
-      .locator('input[name="phone"]')
-      .first()
-      .fill(randomPhone(11))
-      .catch(() => {});
-
-    // Submit the form
-    const submitBtn = page.getByRole('button', { name: /^book$/i }).first();
-    if (await submitBtn.isVisible()) {
-      await submitBtn.click();
-    }
-
-    // Check for success or that we progressed (flexible assertion)
-    await page.waitForTimeout(2000);
-    const url = page.url();
-    expect(url).toBeTruthy();
+    // Sanity: the URL is still on the reservation page.
+    expect(page.url()).toContain('/reservation/');
   });
 
   test('should show home page content @smoke @booking', async ({ homePage }) => {

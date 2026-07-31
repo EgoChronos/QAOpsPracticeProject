@@ -50,9 +50,9 @@ export class ContactPage extends BasePage {
   }
 
   get successMessage(): Locator {
-    return this.page.locator('.contact-confirmation, [class*="contact"]').filter({
-      hasText: /Thanks for getting in touch/i,
-    });
+    // The app (automationintesting.online) renders the confirmation as an
+    // <h3> "Thanks for getting in touch {name}!" inside #contact.
+    return this.page.getByRole('heading', { name: /thanks for getting in touch/i });
   }
 
   get errorMessages(): Locator {

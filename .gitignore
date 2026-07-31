@@ -12,6 +12,7 @@ test-results/
 # Allure
 reporting/allure-results/
 reporting/allure-report/
+allure-results/
 
 # Environment variables — NEVER commit .env
 .env
