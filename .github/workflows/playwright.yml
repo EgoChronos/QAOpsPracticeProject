@@ -68,7 +68,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -93,7 +93,7 @@ jobs:
           BASE_URL: ${{ secrets.STAGING_BASE_URL || 'https://automationintesting.online' }}
           API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'password' }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'password123' }}
           ALLURE_RESULTS_DIR: reporting/allure-results
 
       - name: Upload Playwright Report
@@ -143,7 +143,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -168,7 +168,7 @@ jobs:
           BASE_URL: ${{ secrets.STAGING_BASE_URL || 'https://automationintesting.online' }}
           API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'password' }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'password123' }}
           ALLURE_RESULTS_DIR: reporting/allure-results
 
       - name: Upload blob report
@@ -268,7 +268,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -285,7 +285,7 @@ jobs:
           BASE_URL: ${{ secrets.STAGING_BASE_URL || 'https://automationintesting.online' }}
           API_URL: ${{ secrets.STAGING_API_URL || 'https://restful-booker.herokuapp.com' }}
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin' }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'password' }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'password123' }}
           ALLURE_RESULTS_DIR: reporting/allure-results
 
       - name: Upload API Test Results
