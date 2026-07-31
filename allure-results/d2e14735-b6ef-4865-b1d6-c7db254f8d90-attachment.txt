@@ -1,2 +1,0 @@
-[2026-07-29T22:27:59.127Z] [DEBUG] → GET https://restful-booker.herokuapp.com/ping { params: undefined, data: undefined }
-[2026-07-29T22:27:59.263Z] [DEBUG] ← 201 GET /ping 

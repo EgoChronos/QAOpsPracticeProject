@@ -1,1 +1,0 @@
-[2026-07-29T22:14:58.754Z] [DEBUG] → DELETE https://restful-booker.herokuapp.com/booking/999999999 { params: undefined, data: undefined }

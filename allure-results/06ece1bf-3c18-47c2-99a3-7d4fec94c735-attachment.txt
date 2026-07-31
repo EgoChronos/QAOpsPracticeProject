@@ -1,5 +1,0 @@
-[2026-07-29T22:15:54.910Z] [DEBUG] → POST https://restful-booker.herokuapp.com/auth {
-  params: undefined,
-  data: { username: 'admin', password: 'password123' }
-}
-[2026-07-29T22:15:55.583Z] [DEBUG] ← 200 POST /auth 

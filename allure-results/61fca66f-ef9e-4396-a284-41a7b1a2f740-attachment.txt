@@ -1,7 +1,0 @@
-[2026-07-29T22:21:58.832Z] [ERROR] API Error 403 {
-  status: 403,
-  statusText: 'Forbidden',
-  data: 'Forbidden',
-  url: '/booking/526',
-  method: 'delete'
-}

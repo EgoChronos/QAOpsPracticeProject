@@ -1,5 +1,5 @@
 /**
- * Global Setup — runs once before all test suites.
+ * Global Setup — runs once before all test suites. - 
  *
  * Responsibilities:
  * 1. Validate that the target application is reachable

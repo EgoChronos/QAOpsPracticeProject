@@ -1,6 +1,0 @@
-[2026-07-29T22:15:46.481Z] [INFO ] Fetching auth token for user: admin 
-[2026-07-29T22:15:46.497Z] [DEBUG] → POST https://restful-booker.herokuapp.com/auth {
-  params: undefined,
-  data: { username: 'admin', password: 'password' }
-}
-[2026-07-29T22:15:47.211Z] [DEBUG] ← 200 POST /auth 

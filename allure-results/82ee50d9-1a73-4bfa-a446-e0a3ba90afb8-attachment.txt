@@ -1,2 +1,0 @@
-[2026-07-29T22:50:53.288Z] [DEBUG] Navigating to: /admin 
-[2026-07-29T22:50:54.525Z] [DEBUG] Navigating to: /admin 

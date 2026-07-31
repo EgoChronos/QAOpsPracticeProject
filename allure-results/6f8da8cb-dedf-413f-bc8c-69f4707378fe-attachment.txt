@@ -1,1 +1,0 @@
-[2026-07-29T22:34:08.627Z] [DEBUG] Navigating to: / 

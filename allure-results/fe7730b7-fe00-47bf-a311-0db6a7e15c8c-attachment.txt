@@ -1,7 +1,0 @@
-[2026-07-29T22:21:58.454Z] [ERROR] API Error 404 {
-  status: 404,
-  statusText: 'Not Found',
-  data: 'Not Found',
-  url: '/booking/999999999',
-  method: 'get'
-}
