@@ -20,7 +20,7 @@ import { HealthClient } from '../api/clients/health.client';
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
 
-// Path where the admin auth token is stored between setup and tests -
+// Path where the admin auth token is stored between setup and tests --
 const AUTH_DIR = path.join(process.cwd(), '.auth');
 const AUTH_STATE_FILE = path.join(AUTH_DIR, 'admin.json');
 
